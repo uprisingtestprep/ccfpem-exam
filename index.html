@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CCFP(EM) Self-Practice Timer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="gate-screen" class="screen">
+  <div class="gate-box">
+    <div class="brand">Uprising Test Prep</div>
+    <h1>CCFP(EM) Self-Practice Timer</h1>
+    <p class="muted">Enter your access code to begin.</p>
+    <input id="access-code-input" type="text" placeholder="Access Code" autocomplete="off">
+    <button id="gate-submit" class="btn btn-primary">Enter</button>
+    <p id="gate-error" class="error"></p>
+  </div>
+</div>
+
+<div id="mode-screen" class="screen" style="display:none">
+  <header class="app-header">
+    <div>
+      <div class="brand">Uprising Test Prep</div>
+      <h1>CCFP(EM) Self-Practice Timer</h1>
+    </div>
+    <div class="header-actions">
+      <a href="answers.html" target="_blank" class="btn btn-ghost">Answer Keys</a>
+      <a href="flashcards/index.html" target="_blank" class="btn btn-ghost">Flashcards</a>
+    </div>
+  </header>
+  <div class="mode-body">
+    <p class="muted mode-intro">
+      Choose a practice mode. Model answers and rationale for every case, station, and
+      supplementary MCQ are on the Answer Keys page above; this tool is for timed
+      self-practice only, matching the real exam's timing.
+    </p>
+    <div class="mode-cards">
+      <button class="mode-card" id="mode-samp">
+        <div class="mode-card-title">SAMP Practice Block</div>
+        <div class="mode-card-desc">4-hour countdown. Browse and self-practice any of the
+          140 SAMP cases, reading the scenario and writing your own answers to each
+          sub-question, just like the real written exam.</div>
+        <div class="mode-card-tag">4:00:00 total</div>
+      </button>
+      <button class="mode-card" id="mode-oral">
+        <div class="mode-card-title">Oral Station Rehearsal</div>
+        <div class="mode-card-desc">Cycles through the 40 Structured Oral stations one at a
+          time: 2 minutes reading time, then a 12-minute station timer, matching the real
+          exam's format exactly.</div>
+        <div class="mode-card-tag">2 min read + 12 min station</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SAMP PRACTICE BLOCK ===================== -->
+<div id="samp-list-screen" class="screen" style="display:none">
+  <header class="app-header">
+    <button id="samp-back-to-mode" class="btn btn-ghost">&#8592; Modes</button>
+    <div>SAMP Practice Block</div>
+  </header>
+
+  <section class="panel block-timer-panel">
+    <h2>Block Timer <span class="muted">(4 hours, real exam length)</span></h2>
+    <div id="block-timer-display">4:00:00</div>
+    <div id="block-timer-label" class="muted">Not Started</div>
+    <p class="muted timer-howto">
+      Start the block timer, then browse cases below and write your own answers on paper
+      or in a separate document, just as on the real exam. An optional 15-minute break
+      falls at the halfway point (2:00:00 remaining) &mdash; pause the timer if you take it.
+      No model answers appear in this tool; use the Answer Keys page afterward to mark
+      your own work.
+    </p>
+    <div class="timer-controls">
+      <button id="block-timer-start" class="btn btn-primary">Start Timer</button>
+      <button id="block-timer-pause" class="btn btn-ghost" disabled>Pause</button>
+      <button id="block-timer-reset" class="btn btn-ghost">Reset</button>
+    </div>
+  </section>
+
+  <div class="filters">
+    <select id="filter-chapter"><option value="">All Chapters</option></select>
+    <select id="filter-topic"><option value="">All Topics</option></select>
+    <span id="samp-case-count" class="muted"></span>
+  </div>
+
+  <div id="samp-case-list" class="case-list"></div>
+</div>
+
+<div id="samp-case-screen" class="screen" style="display:none">
+  <header class="app-header">
+    <button id="samp-back-to-list" class="btn btn-ghost">&#8592; All Cases</button>
+    <div id="samp-case-title-header"></div>
+  </header>
+  <div class="case-body">
+    <div class="meta-row">
+      <span id="samp-case-chapter-badge" class="badge"></span>
+      <span id="samp-case-topic-badge" class="badge badge-alt"></span>
+    </div>
+    <section class="panel">
+      <h2>Scenario</h2>
+      <p id="samp-case-stem" class="preline"></p>
+    </section>
+    <section class="panel">
+      <h2>Sub-Questions <span class="muted">(write your own short answers)</span></h2>
+      <ol id="samp-case-subquestions" class="subq-list"></ol>
+    </section>
+    <p class="muted answers-note">
+      Model answers and marking rationale for this case are on the
+      <a href="answers.html" target="_blank">Answer Keys page</a> (Part 2).
+    </p>
+    <button id="samp-mark-practiced-btn" class="btn btn-primary btn-block">Mark as Practiced</button>
+  </div>
+</div>
+
+<!-- ===================== ORAL STATION REHEARSAL ===================== -->
+<div id="oral-screen" class="screen" style="display:none">
+  <header class="app-header">
+    <button id="oral-back-to-mode" class="btn btn-ghost">&#8592; Modes</button>
+    <div id="oral-station-header"></div>
+  </header>
+  <div class="case-body">
+    <div class="meta-row">
+      <span id="oral-station-badge" class="badge"></span>
+      <span id="oral-topic-badge" class="badge badge-alt"></span>
+    </div>
+
+    <section class="panel oral-phase-panel">
+      <h2 id="oral-phase-title">Reading Time</h2>
+      <div id="oral-timer-display">2:00</div>
+      <div id="oral-timer-label" class="muted">Not Started</div>
+      <p class="muted timer-howto" id="oral-howto">
+        Read the stem below for up to 2 minutes, just like the real exam. When reading
+        time ends the 12-minute station timer starts automatically and the examiner
+        scenario becomes visible.
+      </p>
+      <div class="timer-controls">
+        <button id="oral-timer-start" class="btn btn-primary">Start Station</button>
+        <button id="oral-timer-pause" class="btn btn-ghost" disabled>Pause</button>
+        <button id="oral-timer-reset" class="btn btn-ghost">Reset Station</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Candidate Reading Stem</h2>
+      <p id="oral-reading-stem" class="preline"></p>
+    </section>
+
+    <section class="panel" id="oral-scenario-panel" hidden>
+      <h2>Examiner Scenario <span class="muted">(reveals when station timer starts)</span></h2>
+      <p id="oral-examiner-scenario" class="preline"></p>
+    </section>
+
+    <p class="muted answers-note">
+      The examiner checklist and a model verbalized answer for this station are on the
+      <a href="answers.html" target="_blank">Answer Keys page</a> (Part 3).
+    </p>
+
+    <div class="oral-nav-row">
+      <button id="oral-prev-station" class="btn btn-ghost">&#8592; Previous Station</button>
+      <span id="oral-station-progress" class="muted"></span>
+      <button id="oral-next-station" class="btn btn-primary">Next Station &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
